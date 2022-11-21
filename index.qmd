@@ -1,0 +1,45 @@
+---
+title: "Old Faithful"
+format: html
+server: shiny
+---
+
+```{r}
+#| label: interfaz-usuario
+
+# Este bloque de código dibuja la interfaz de usuario,
+# tanto los controles de entrada como los de salida
+
+# Widget de tipo "slider" para entrada de datos
+sliderInput(inputId = "bins", 
+            label = 'Cantidad de "bins" del histograma:', 
+            min = 1, max = 50, value = 30)
+            
+# Gráfico de salida
+plotOutput(outputId = "histograma")
+```
+
+```{r}
+#| label: servidor
+#| context: server
+
+# Este bloque realiza el procesamiento en el servidor.
+
+# Generación del gráfico de salida
+output$histograma <- renderPlot({
+  # Vector con datos de duración de intervalos entre erupciones
+  x <- faithful[, 2]  
+  
+  # "Bins" del histograma
+  bins <- seq(from = min(x), to = max(x), length.out = input$bins + 1)
+  
+  # Histograma
+  hist(x = x,
+       breaks = bins,
+       main = 'Distribución de duración de intervalos entre erupciones',
+       xlab = "Duración de intervalos (min)",
+       ylab = "Frecuencia",
+       col = 'darkgray',
+       border = 'white')
+})
+```
